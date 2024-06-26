@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Sample Application</title>
+        <script>
+            /*
+                no frontend action necessary to login
+             */
+        </script>
+    </head>
+    <body>
+        This app shall demonstrate how authentication works with redirects.
+        <ul>
+            <li><a href="protected-endpoint">protected endpoint - what are my roles? (all users)</a></li>
+            <li><a href="protected-endpoint-with-role">protected endpoint for users (role "write")</a></li>
+            <li><a href="admin-endpoint">admin endpoint</a></li>
+        </ul>
+        <button onclick="window.location='/logout'">Logout</button>
+    </body>
+</html>

@@ -6,8 +6,28 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://${HOST_IP}:8090/
     volumes:
       - ./realm-microservices.json:/opt/keycloak/data/import/realm.json
     command: ["start-dev", "--import-realm"]
     ports:
+      - 8090:8080
+
+  keycloak-healthchecker:
+    build: ./healthchecker
+    command: ["sleep", "9999999"]
+    init: true
+    healthcheck:
+      test: curl --fail http://keycloak:8080/realms/microservices || exit 1
+      interval: 1s
+      retries: 20
+
+  spring-boot-redirect:
+    build: ./spring-boot-redirect
+    ports:
       - 8080:8080
+    environment:
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: http://${HOST_IP}:8090/realms/microservices
+    depends_on:
+      keycloak-healthchecker:
+        condition: service_healthygs
