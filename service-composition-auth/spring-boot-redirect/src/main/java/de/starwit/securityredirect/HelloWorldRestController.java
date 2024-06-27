@@ -62,7 +62,7 @@ public class HelloWorldRestController {
 
     @GetMapping("/admin-endpoint")
     public String adminEndpoint() {
-        return "With great power comes great responsibility.";
+        return "With great power comes great responsibility &#x1F4A5";
     }
 
 }

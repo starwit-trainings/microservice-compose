@@ -10,7 +10,7 @@
     - microservices-user
     - microservices-admin
   - Login and see what you can do...
-- You can access the Keycloak admin console at `http://localhost:8090/`
+- You can access the Keycloak admin console at `http://localhost:8090/` (credentials for master realm: `admin` and `admin`)
 
 ## How can I make changes to the Keycloak realm persistent
 The `microservices` realm is recreated from `microservices-realm.json` whenever the keycloak container is freshly started.

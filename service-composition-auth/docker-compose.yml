@@ -14,6 +14,7 @@ services:
     ports:
       - 8090:8080
 
+  # This is a workaround for the Keycloak image not containing any tools suitable for health checking
   keycloak-healthchecker:
     build: ./healthchecker
     command: ["sleep", "9999999"]
@@ -32,3 +33,14 @@ services:
     depends_on:
       keycloak-healthchecker:
         condition: service_healthy
+
+  spring-boot-resource-server:
+    build: ./spring-boot-resource-server
+    ports:
+      - 8081:8081
+    environment:
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://${HOST_IP}:8090/realms/microservices
+    depends_on:
+      keycloak-healthchecker:
+        condition: service_healthy
+    
