@@ -3,34 +3,54 @@
         <title>Sample Application</title>
     </head>
     <body>
-        <p>This app shall demonstrate how authentication works with a resource server.</p>
+        <p>
+            This app shall demonstrate how authentication works with a resource server.<br>
+            Feel free to play around (e.g. try without token; try different users) and make sure to check out the network tab in your browsers dev tools.
+        </p>
+        <h3>1. Get token from Keycloak</h3>
         <div style="margin-bottom: 20px;">
             <input id="kc-username" type="text" value="microservices-guest">
             <input id="kc-password" type="text" value="microservices-guest">
             <button id="get-token">Get token</button>
+            <button id="clear-token">Clear token</button>
             <button id="copy-token">Copy token to clipboard</button>
             <br>
             <span id="token-display" style="color: grey;"></span>
         </div>
+        <h3>2. Make backend request</h3>
         <div>
-            <button id="make-public-request">Make public request</button>
-            <button id="make-read-request">Make read request</button>
-            <button id="make-write-request">Make write request</button>
-            <button id="make-admin-request">Make admin request</button>
-            <br>
-            <span id="api-response-display"></span>
+            <p>
+                <select id="backend-select">
+                    <option value="http://localhost:8082">Backend 1 (@localhost:8082)</option>
+                    <option value="http://localhost:8083">Backend 2 (@localhost:8083)</option>
+                </select>
+            </p>
+            <p>
+                <button id="make-public-request">Make public request</button>
+                <button id="make-read-request">Make read request</button>
+                <button id="make-write-request">Make write request</button>
+                <button id="make-admin-request">Make admin request</button>
+            </p>
+            <p>
+                <span id="api-response-header" style="color: grey;"></span>
+                <span id="api-response-display"></span>
+            </p>
         </div>
 
         <script>
             const getTokenButton = document.getElementById("get-token")
+            const clearTokenButton = document.getElementById("clear-token")
             const copyTokenButton = document.getElementById("copy-token")
             const usernameInput = document.getElementById("kc-username")
             const passwordInput = document.getElementById("kc-password")
             const tokenSpan = document.getElementById("token-display")
+
+            const backendSelect = document.getElementById("backend-select")
             const publicRequestButton = document.getElementById("make-public-request")
             const readRequestButton = document.getElementById("make-read-request")
             const writeRequestButton = document.getElementById("make-write-request")
             const adminRequestButton = document.getElementById("make-admin-request")
+            const responseHeaderSpan = document.getElementById("api-response-header")
             const responseSpan = document.getElementById("api-response-display")
 
             let accessToken = null
@@ -51,6 +71,11 @@
                 tokenSpan.innerHTML = `Saved Bearer token: ${accessToken}`
             })
 
+            clearTokenButton.addEventListener("click", () => {
+                accessToken = null
+                tokenSpan.innerHTML = ""
+            })
+
             copyTokenButton.addEventListener("click", async () => {
                 await navigator.clipboard.writeText(accessToken)
                 copyTokenButton.innerHTML = "Copied!"
@@ -58,23 +83,25 @@
                     copyTokenButton.innerHTML = "Copy token to clipboard"
                 }, 2000);
             })
-            
-            function makeApiFetcher(url) {
+
+            function makeApiFetcher(path) {
+                const backendUrl = `${backendSelect.value}${path}`
                 return async () => {
-                    const apiResponse = await fetch(url, {
+                    const apiResponse = await fetch(backendUrl, {
                         method: "GET",
                         headers: {
                             "Authorization": accessToken == null ? "" : `Bearer ${accessToken}`
                         }
                     })
-                    responseSpan.innerHTML = `API response (code=${apiResponse.status}): <br>${await apiResponse.text()}`
+                    responseHeaderSpan.innerHTML = `API response (from=${backendUrl}) (status=${apiResponse.status})`
+                    responseSpan.innerHTML = await apiResponse.text()
                 }
             }
 
-            publicRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/public-endpoint"))
-            readRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/read-endpoint"))
-            writeRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/write-endpoint"))
-            adminRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/admin-endpoint"))
+            publicRequestButton.addEventListener("click", makeApiFetcher("/public-endpoint"))
+            readRequestButton.addEventListener("click", makeApiFetcher("/read-endpoint"))
+            writeRequestButton.addEventListener("click", makeApiFetcher("/write-endpoint"))
+            adminRequestButton.addEventListener("click", makeApiFetcher("/admin-endpoint"))
         </script>
     </body>
 </html>
