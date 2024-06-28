@@ -34,11 +34,30 @@ services:
       keycloak-healthchecker:
         condition: service_healthy
 
+  nginx:
+    image: nginx:1.27
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html
+    ports:
+      - 8081:80
+
   spring-boot-resource-server:
     build: ./spring-boot-resource-server
     ports:
-      - 8081:8081
+      - 8082:8081
     environment:
+      IDENTIFICATION: backend-1
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://${HOST_IP}:8090/realms/microservices
+    depends_on:
+      keycloak-healthchecker:
+        condition: service_healthy
+
+  spring-boot-resource-server2:
+    build: ./spring-boot-resource-server
+    ports:
+      - 8083:8081
+    environment:
+      IDENTIFICATION: backend-2
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: http://${HOST_IP}:8090/realms/microservices
     depends_on:
       keycloak-healthchecker:
