@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <title>Sample Application</title>
+    </head>
+    <body>
+        <p>This app shall demonstrate how authentication works with a resource server.</p>
+        <div style="margin-bottom: 20px;">
+            <input id="kc-username" type="text" value="microservices-guest">
+            <input id="kc-password" type="text" value="microservices-guest">
+            <button id="get-token">Get token</button>
+            <button id="copy-token">Copy token to clipboard</button>
+            <br>
+            <span id="token-display" style="color: grey;"></span>
+        </div>
+        <div>
+            <button id="make-public-request">Make public request</button>
+            <button id="make-read-request">Make read request</button>
+            <button id="make-write-request">Make write request</button>
+            <button id="make-admin-request">Make admin request</button>
+            <br>
+            <span id="api-response-display"></span>
+        </div>
+
+        <script>
+            const getTokenButton = document.getElementById("get-token")
+            const copyTokenButton = document.getElementById("copy-token")
+            const usernameInput = document.getElementById("kc-username")
+            const passwordInput = document.getElementById("kc-password")
+            const tokenSpan = document.getElementById("token-display")
+            const publicRequestButton = document.getElementById("make-public-request")
+            const readRequestButton = document.getElementById("make-read-request")
+            const writeRequestButton = document.getElementById("make-write-request")
+            const adminRequestButton = document.getElementById("make-admin-request")
+            const responseSpan = document.getElementById("api-response-display")
+
+            let accessToken = null
+
+            getTokenButton.addEventListener("click", async () => {
+                const body = new URLSearchParams()
+                body.append("grant_type", "password")
+                body.append("client_id", "microservices")
+                body.append("username", usernameInput.value)
+                body.append("password", passwordInput.value)
+                
+                const tokenResponse = await fetch("http://localhost:8090/realms/microservices/protocol/openid-connect/token", {
+                    method: "POST",
+                    body: body,
+                })
+                
+                accessToken = (await tokenResponse.json())['access_token']
+                tokenSpan.innerHTML = `Saved Bearer token: ${accessToken}`
+            })
+
+            copyTokenButton.addEventListener("click", async () => {
+                await navigator.clipboard.writeText(accessToken)
+                copyTokenButton.innerHTML = "Copied!"
+                setTimeout(() => {
+                    copyTokenButton.innerHTML = "Copy token to clipboard"
+                }, 2000);
+            })
+            
+            function makeApiFetcher(url) {
+                return async () => {
+                    const apiResponse = await fetch(url, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": accessToken == null ? "" : `Bearer ${accessToken}`
+                        }
+                    })
+                    responseSpan.innerHTML = `API response (code=${apiResponse.status}): <br>${await apiResponse.text()}`
+                }
+            }
+
+            publicRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/public-endpoint"))
+            readRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/read-endpoint"))
+            writeRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/write-endpoint"))
+            adminRequestButton.addEventListener("click", makeApiFetcher("http://localhost:8081/admin-endpoint"))
+        </script>
+    </body>
+</html>

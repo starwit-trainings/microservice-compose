@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers("/public-endpoint").permitAll()
                 .requestMatchers("/index.html").permitAll()
                 .requestMatchers("/admin-endpoint").hasAuthority("admin")
-                .requestMatchers("/protected-endpoint-with-role").hasAnyAuthority("admin", "user")
+                .requestMatchers("/protected-endpoint-with-role").hasAnyAuthority("admin", "write")
                 .anyRequest().authenticated()
             )
             .oauth2Login(Customizer.withDefaults())
@@ -97,6 +97,6 @@ public class SecurityConfig {
             return mappedAuthorities;
         }
 
-    }    
+    }
      
 }
