@@ -1,0 +1,18 @@
+services:
+  pdf-service:
+    image: sbom-report-generator:latest
+
+  logo-service:
+    image: logo-service-otel:latest
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.100.14:61113
+      - OTEL_SERVICE_NAME=logo-service
+
+  info-service:
+    build: ./infoservice
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://${HOST_IP}:61114
+      PDF_SERVICE_URL: http://pdf-service:8080/api/design/
+      LOGO_SERVICE_URL: http://logo-service:8000/logo-service/info
+    ports:
+      - 8081:8080
