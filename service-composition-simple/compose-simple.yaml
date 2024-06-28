@@ -1,0 +1,29 @@
+services:
+  simple-postgres:
+    container_name: postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: my_grafana_db
+      POSTGRES_USER: my_grafana_user
+      POSTGRES_PASSWORD: my_grafana_pwd
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  simple-grafana:
+    container_name: simple-grafana
+    image: grafana/grafana:latest
+    user: "0:0"
+    restart: unless-stopped
+    depends_on:
+        - simple-postgres
+    ports:
+      - 3001:3000
+    volumes:
+      - grafana:/var/lib/grafana
+      
+volumes:
+  postgres:
+    driver: local
+  grafana:
+    driver: local
