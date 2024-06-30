@@ -20,7 +20,28 @@
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/",
+          "url_pattern": "/api/design",
+          "encoding": "json",
+          "sd": "static",
+          "is_collection": true,
+          "mapping": {
+            "collection": "designs"
+          },
+          "method": "GET",
+          "host": [
+            "http://pdf-service:8080"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/design/{dcId}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/design/{dcId}",
           "encoding": "json",
           "sd": "static",
           "method": "GET",
@@ -33,6 +54,32 @@
     },
     {
       "endpoint": "/info",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/info",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://logo-service:8000"
+          ],
+          "disable_host_sanitize": false,
+          "extra_config": {
+            "qos/circuit-breaker": {
+                "interval": 60,
+                "timeout": 10,
+                "max_errors": 1,
+                "name": "logo-service-endpoint",
+                "log_status_change": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/logo-service/info",
       "method": "GET",
       "output_encoding": "json",
       "backend": [
