@@ -1,0 +1,17 @@
+services:
+  krakend:
+    image: devopsfaith/krakend
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./krakend.json:/etc/krakend/krakend.json
+  
+  pdf-service:
+    image: sbom-report-generator:latest
+    ports:
+      - 8080:8080
+
+  logo-service:
+    image: logo-service:latest
+    ports:
+      - 8000:8000    
