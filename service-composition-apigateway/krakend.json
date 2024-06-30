@@ -53,12 +53,12 @@
       ]
     },
     {
-      "endpoint": "/info",
+      "endpoint": "/logo-service/info",
       "method": "GET",
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/info",
+          "url_pattern": "/logo-service/info",
           "encoding": "json",
           "sd": "static",
           "method": "GET",
@@ -79,12 +79,12 @@
       ]
     },
     {
-      "endpoint": "/logo-service/info",
+      "endpoint": "/logo-service2/info",
       "method": "GET",
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/info",
+          "url_pattern": "/logo-service/info",
           "encoding": "json",
           "sd": "static",
           "method": "GET",
