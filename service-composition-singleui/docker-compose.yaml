@@ -1,8 +1,8 @@
 services:
-  # pdf-service:
-  #   image: sbom-report-generator:latest
-  #   ports:
-  #     - 8080:8080
+  pdf-service:
+    image: sbom-report-generator:latest
+    ports:
+      - 8080:8080
 
   logo-service-cors:
     image: logo-service:latest

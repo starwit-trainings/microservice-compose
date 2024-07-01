@@ -53,15 +53,15 @@
                 let body;
                 
                 if(paths[target].method == "POST") {
-                    body = pdfRequest;
-                    console.log(pdfRequest);
-                } else {
-                    body = "";
-                }
-                fetch(paths[target].path, {
-                    method: paths[target].method,
-                    body: body})
+                    fetch(paths[target].path, {
+                        method: "POST",
+                        body: pdfRequest})
                     .then((response) => responseSpan.innerHTML = response);
+                } else {
+                    fetch(paths[target].path)
+                    .then((response) => responseSpan.innerHTML = response);
+                }
+
             }
 
             dataRequest.addEventListener("click", makeApiFetcher);
