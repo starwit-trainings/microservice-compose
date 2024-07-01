@@ -4,8 +4,8 @@ services:
     ports:
       - 8080:8080
 
-  logo-service-cors:
-    image: logo-service:latest
+  logo-service:
+    image: logo-service-cors:latest
     ports:
       - 8000:8000
 
@@ -19,6 +19,6 @@ services:
   simple-proxy:
     build: ./proxydemo
     environment:
-      LOGO_SERVICE_HOST: http://logo-service-cors:8000
+      LOGO_SERVICE_HOST: http://logo-service:8000
     ports:
       - 8082:8080
