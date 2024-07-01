@@ -11,13 +11,11 @@
         <div>
             <p>
                 <select id="backend-select">
-                    <option value="pdf">PDF service (@localhost:8080)</option>
-                    <option value="logo">Logo service (@localhost:8000)</option>
+                    <option value="pdf-data">PDF service data (@localhost:8080)</option>
+                    <option value="pdf-binary">PDF service binary (@localhost:8080)</option>
+                    <option value="logo-data">Logo service data (@localhost:8000)</option>
+                    <option value="logo-binary">Logo service binary (@localhost:8000)</option>
                 </select>
-                <select id="request-select">
-                    <option value="data">data</option>
-                    <option value="binary">binary</option>
-                </select>                
             </p>
             <p>
                 <button id="data-request">Load data</button>
@@ -29,28 +27,40 @@
         </div>
 
         <script>
-            let hosts = {"pdf": "http://localhost:8080", "logo": "http://localhost:8000"};
-            let paths = {"pdf-data":"/api/desgin", 
-                            "pdf-binary" : "/api/repost/0",
-                            "logo-data" : "/logo-service/log/all",
-                            "logo-binary" : "/logo-service/image/0"
+            let pdfRequest;
+            async function loadData() {
+                pdfData = await fetch("/sbom.json");
+                pdfRequest = await pdfData.json();
+            }
+            
+            loadData();
+
+
+            let paths = {"pdf-data": {"path" : "http://localhost:8080/api/design", "method": "GET"}, 
+                            "pdf-binary" : {"path" : "http://localhost:8080/api/report/0", "method": "POST"},
+                            "logo-data" :  {"path" : "http://localhost:8000/logo-service/log/all", "method": "GET"},
+                            "logo-binary" : {"path" : "http://localhost:8000/logo-service/image/0", "method": "GET"},
                         };
 
             const backendSelect = document.getElementById("backend-select");
-            const requestSelect = document.getElementById("request-select");
-
             const dataRequest = document.getElementById("data-request");
 
             const responseHeaderSpan = document.getElementById("api-response-header");
             const responseSpan = document.getElementById("api-response-display");      
 
             function makeApiFetcher() {
-                backendTarget = backendSelect.value + "-" + requestSelect.value;
-                const backendHost = hosts[backendSelect.value];
-                const backendPath = paths[backendTarget];
-                const backendUrl = backendHost + backendPath;
-
-                fetch(backendUrl)
+                const target = backendSelect.value;
+                let body;
+                
+                if(paths[target].method == "POST") {
+                    body = pdfRequest;
+                    console.log(pdfRequest);
+                } else {
+                    body = "";
+                }
+                fetch(paths[target].path, {
+                    method: paths[target].method,
+                    body: body})
                     .then((response) => responseSpan.innerHTML = response);
             }
 
