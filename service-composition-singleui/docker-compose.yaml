@@ -15,3 +15,10 @@ services:
       - ./nginx/html:/usr/share/nginx/html
     ports:
       - 8081:80
+
+  simple-proxy:
+    build: ./proxydemo
+    environment:
+      LOGO_SERVICE_HOST: http://logo-service-cors:8000
+    ports:
+      - 8082:8080
