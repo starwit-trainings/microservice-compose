@@ -20,6 +20,7 @@ services:
     ports:
       - 3001:3000
     volumes:
+      - ./postgresql.yaml:/etc/grafana/provisioning/datasources/postgresql.yaml
       - grafana:/var/lib/grafana
       
 volumes:
