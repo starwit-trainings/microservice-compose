@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Single UI in front of multiple services</title>
+    </head>
+    <body>
+        <p>
+            This app shall demonstrate how a single UI sits in front of multiple services<br>
+        </p>
+
+        <h3>Choose backend request</h3>
+        <div>
+            <p>
+                <select id="backend-select">
+                    <option value="pdf">PDF service (@localhost:8080)</option>
+                    <option value="logo">Logo service (@localhost:8000)</option>
+                </select>
+                <select id="request-select">
+                    <option value="data">data</option>
+                    <option value="binary">binary</option>
+                </select>                
+            </p>
+            <p>
+                <button id="data-request">Load data</button>
+            </p>
+            <p>
+                <span id="api-response-header" style="color: grey;"></span>
+                <span id="api-response-display"></span>
+            </p>
+        </div>
+
+        <script>
+            let hosts = {"pdf": "http://localhost:8080", "logo": "http://localhost:8000"};
+            let paths = {"pdf-data":"/api/desgin", 
+                            "pdf-binary" : "/api/repost/0",
+                            "logo-data" : "/logo-service/log/all",
+                            "logo-binary" : "/logo-service/image/0"
+                        };
+
+            const backendSelect = document.getElementById("backend-select");
+            const requestSelect = document.getElementById("request-select");
+
+            const dataRequest = document.getElementById("data-request");
+
+            const responseHeaderSpan = document.getElementById("api-response-header");
+            const responseSpan = document.getElementById("api-response-display");      
+
+            function makeApiFetcher() {
+                backendTarget = backendSelect.value + "-" + requestSelect.value;
+                const backendHost = hosts[backendSelect.value];
+                const backendPath = paths[backendTarget];
+                const backendUrl = backendHost + backendPath;
+
+                fetch(backendUrl)
+                    .then((response) => responseSpan.innerHTML = response);
+            }
+
+            dataRequest.addEventListener("click", makeApiFetcher);
+        </script>
+    </body>
+</html>
