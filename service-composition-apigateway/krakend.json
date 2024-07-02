@@ -94,6 +94,61 @@
           "disable_host_sanitize": false
         }
       ]
-    }
+    },
+    {
+      "endpoint": "/logo-service/logo/all",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/logo-service/logo/all",
+          "encoding": "json",
+          "sd": "static",
+          "is_collection": true,
+          "mapping": {
+            "collection": "logos"
+          },
+          "method": "GET",
+          "host": [
+            "http://logo-service:8000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/v2/api/design",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api/design",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://pdf-service:8080"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/report/{dcId}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api/report/{dcId}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://pdf-service:8080"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }    
   ]
 }

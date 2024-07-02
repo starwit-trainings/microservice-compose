@@ -24,18 +24,15 @@
                 <span id="api-response-header" style="color: grey;"></span>
                 <span id="api-response-display"></span>
             </p>
+            <p>
+                <textarea id="sbom" name="sbom" rows="40" cols="50"></textarea>
+            </p>
+            <p>
+                <button id="pdf-request">Send PDF</button>
+            </p>
         </div>
 
         <script>
-            let pdfRequest;
-            async function loadData() {
-                pdfData = await fetch("/sbom.json");
-                pdfRequest = await pdfData.json();
-            }
-            
-            loadData();
-
-
             let paths = {"pdf-data": {"path" : "http://localhost:8080/api/design", "method": "GET"}, 
                             "pdf-binary" : {"path" : "http://localhost:8080/api/report/0", "method": "POST"},
                             "logo-data" :  {"path" : "http://localhost:8000/logo-service/logo/all", "method": "GET"},
@@ -44,27 +41,41 @@
 
             const backendSelect = document.getElementById("backend-select");
             const dataRequest = document.getElementById("data-request");
+            const sbom = document.getElementById("sbom");
+            const pdfRequestBtn = document.getElementById("pdf-request");
 
             const responseHeaderSpan = document.getElementById("api-response-header");
-            const responseSpan = document.getElementById("api-response-display");      
+            const responseSpan = document.getElementById("api-response-display");
+
+            async function loadData() {
+                pdfData = await fetch("/sbom.json");
+                sbom.value = JSON.stringify( await pdfData.json());
+            }
+            
+            loadData();            
 
             function makeApiFetcher() {
                 const target = backendSelect.value;
-                let body;
-                
-                if(paths[target].method == "POST") {
-                    fetch(paths[target].path, {
-                        method: "POST",
-                        body: pdfRequest})
-                    .then((response) => responseSpan.innerHTML = response);
-                } else {
-                    fetch(paths[target].path)
-                    .then((response) => responseSpan.innerHTML = response);
-                }
+
+                fetch(paths[target].path, {
+                    method: paths[target].method})
+                .then((response) => responseSpan.innerHTML = response);
 
             }
 
+            function sendPDFRequest() {
+                fetch("http://localhost:8080/api/report/0",{
+                        method: "POST",
+                        body: sbom.value})
+                    .then(res => res.blob())
+                    .then( blob => {
+                        var file = window.URL.createObjectURL(blob);
+                        window.location.assign(file);
+                    });
+            }
+
             dataRequest.addEventListener("click", makeApiFetcher);
+            pdfRequestBtn.addEventListener("click", sendPDFRequest);
         </script>
     </body>
 </html>

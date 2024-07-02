@@ -8,10 +8,6 @@ services:
   
   pdf-service:
     image: sbom-report-generator:latest
-    ports:
-      - 8080:8080
 
   logo-service:
     image: logo-service:latest
-    ports:
-      - 8000:8000    

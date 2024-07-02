@@ -110,6 +110,23 @@
           "disable_host_sanitize": false
         }
       ]
-    }
+    },
+    {
+      "endpoint": "/api/report/{dcId}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/api/report/{dcId}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://pdf-service:8080"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }  
   ]
 }
